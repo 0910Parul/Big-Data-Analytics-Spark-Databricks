@@ -1,75 +1,118 @@
-# Big Data Analytics with Spark & Databricks: Hive, Spark SQL, MLlib, Streaming & MLflow
+# Scalable Data Analytics and Machine Learning with Apache Spark & Databricks
 
-This repository collects my hands-on work from **MSBA 6331 — Big Data Analytics** (Carlson, University of Minnesota). It covers the full big data workflow on **Databricks**:
-- querying with **Hive** and **Spark SQL** on multi-gigabyte datasets (including **22 million rows** of Wikipedia clickstream data)
-- building distributed **Spark MLlib** pipelines
-- processing **streaming** IoT data
-- tracking experiments with **MLflow**
-- wiring a hosted LLM into a **Streamlit chatbot**
+## Project Overview
 
-The best models reached **AUC 0.831** (Titanic survival) and **AUC 0.904** (census income).
+This repository explores distributed data processing, predictive analytics, streaming, and AI integration using Apache Spark and Databricks. Seven modules cover data ingestion and SQL analysis, reusable machine learning pipelines, experiment tracking, and a Streamlit chatbot connected to a hosted LLM.
 
-## 🔍 Project Goals
+The analytical objective is to turn large or continuously arriving datasets into structured information and evaluated models. Separate use cases include retail data, Yelp reviews, Wikipedia clickstream data, Titanic survival, and census income.
 
-- Learn to store, query and transform data that's too big for a single machine, using Hive, Spark DataFrames and Spark SQL on Unity Catalog.
-- Build, tune and evaluate machine learning pipelines that scale, with Spark MLlib.
-- Put models and data flows into production with Structured Streaming, MLflow experiment tracking and an LLM-powered app.
+## Key Highlights
 
-## 📄 Files Included
+- **Data scale:** loaded a Wikipedia clickstream source with **22M+ rows** and created a seeded 10% sample for SQL exercises.
+- **Predictive modeling:** recorded test ROC-AUC of **0.831** for Titanic survival and **0.904** for census income classification.
+- **Model comparison:** evaluated logistic regression and random forest pipelines using ROC-AUC, accuracy, and weighted F1.
+- **Streaming:** implemented event aggregations with one-hour windows, 30-minute slides, and checkpointed table output.
+- **Experiment tracking and AI integration:** logged model parameters and metrics with MLflow and built a Streamlit interface using a Databricks-hosted endpoint.
 
-| Folder | Notebook | What it covers |
-|---|---|---|
-| `01_Databricks_and_Spark_Basics/` | `Lab1-1`, `Lab1-2` | Linux shell and file operations on the Databricks driver |
-| | `Lab5-1_Using_Spark` | Spark fundamentals: Unity Catalog volumes, loading CSVs into DataFrames, lineage and `explain()` execution plans, and feature computation |
-| `02_Hive/` | `Lab3-1_Hive_Intro` | Creating Hive databases and tables and querying a retail (`dualcore`) dataset |
-| | **`HW1_Big_Data_and_Hive`** | Big data architecture (shared-nothing design, managed vs. external tables) and Hive analysis |
-| `03_Spark_DataFrames_and_SQL/` | `Lab6-1_Create_DataFrames` | Creating and saving DataFrames from different sources and formats |
-| | `Lab6-2_LendingClub_Analysis` | Sampling, cleaning and analyzing LendingClub loan data |
-| | **`HW2_Spark_SQL_Yelp`** | Yelp academic dataset (346 MB, ~500K rows) and Wikipedia clickstream data (1.2 GB, 22M rows) |
-| `04_Spark_MLlib/` | `Lab8-1_Feature_APIs` | OneHotEncoder, StringIndexer, VectorAssembler and scalers |
-| | `Lab8-2_Concrete_Strength_Regression` | Feature pipeline with standardization for a regression target |
-| | `Lab8-3_Used_Car_Value_Prediction` | Decision tree classifier inside an ML Pipeline |
-| | `Lab8-4_ML_Pipeline` | Bike-share demand: GBTRegressor plus CrossValidator hyperparameter tuning |
-| | **`HW3_Spark_MLlib`** | Spark MLlib vs. scikit-learn and H2O comparison; Titanic survival with logistic regression vs. random forest |
-| `05_Structured_Streaming/` | `Lab10-2_IoT_Streaming` | Windowed aggregations on streaming IoT events |
-| `06_MLflow/` | `Lab13-2_MLflow_Tracking` | Logging parameters, metrics and models to MLflow |
-| | **`HW4_MLflow_with_Spark_MLlib`** | Census income prediction: tracking a baseline model vs. a cross-validated one |
-| `07_GenAI_Chatbot/` | `chatbot.py` | Streamlit chatbot calling a Databricks-hosted LLM (`.env.example` shows the configuration) |
+Start with the [model comparison](04_Spark_MLlib/HW3_Spark_MLlib.ipynb), [MLflow experiment](06_MLflow/HW4_MLflow_with_Spark_MLlib.ipynb), or [results evidence and limitations](docs/RESULTS_EVIDENCE.md).
 
-> The notebooks were developed on Databricks and converted to `.ipynb` from Databricks exports. Results are shown as text outputs, and interactive charts aren't kept. Most data comes from `databricks-datasets` or public sources, so no large data files are stored here.
+## Technical Implementation
 
-## 🧪 Methods Used
+| Module | Implementation |
+|---|---|
+| Databricks and Spark basics | Linux file operations, Unity Catalog volumes, CSV loading, DataFrame transformations, and execution plans |
+| Hive | Database and table creation, managed and external table concepts, and retail queries |
+| DataFrames and SQL | LendingClub exploration; Yelp schema inspection, table separation, and joins; Wikipedia source loading, sampling, and aggregation exercises |
+| Spark MLlib | Feature encoding and assembly, missing-value handling, classification and regression workflows, model persistence, and cross-validation |
+| Structured Streaming | Explicit event schema, windowed counts, incremental file ingestion, checkpoints, and table output using an available-now trigger |
+| MLflow | Parameter and metric logging, run comparisons, saved-model loading, and baseline versus tuned census-income models |
+| GenAI chatbot | OpenAI-compatible client, Databricks endpoint configuration, conversation history, and a Streamlit interface |
 
-- **Distributed storage and querying:** Hive DDL and managed vs. external tables on Unity Catalog, Spark SQL joins and aggregations, and a medallion-style raw (bronze) → cleaned table flow.
-- **Data engineering with Spark DataFrames:** schema inspection, sampling large datasets, type casting, splitting and joining, and saving managed tables.
-- **Machine learning with Spark MLlib:**
-  - feature transformers and VectorAssembler inside end-to-end ML Pipelines
-  - logistic regression, decision tree, random forest and gradient-boosted tree models
-  - **CrossValidator + ParamGridBuilder** hyperparameter tuning
-  - evaluation with AUC, accuracy, F1 and RMSE
-- **Structured Streaming:** turning batch logic into a streaming job, windowed counts, and writing streams to tables.
-- **MLOps:** MLflow experiment tracking, comparing runs and selecting a model, and saving trained pipeline models.
-- **GenAI integration:** an OpenAI-compatible client pointed at a Databricks AI Gateway, with Streamlit session state for chat history.
+HW3 also discusses scikit-learn and H2O alongside Spark MLlib as a qualitative framework comparison.
 
-## 📈 Key Findings
+## Methods & Technologies
 
-- **Titanic survival (HW3):** a tuned **random forest** beat logistic regression, with **AUC 0.831 vs. 0.797**, accuracy **81.9% vs. 73.9%**, and F1 **0.814 vs. 0.737**.
-- **Census income (HW4):** logistic regression reached **AUC 0.904** and **85.4% accuracy**. A version with 3-fold cross-validation over 9 hyperparameter combinations matched that performance, and I chose it in MLflow because its tuning is systematic and therefore more reliable.
-- **Framework choice (HW3):** Spark MLlib is the right tool when data can't fit on one machine or has to plug into streaming pipelines (e.g., churn across millions of records, real-time fraud detection). scikit-learn is better for fast prototyping on smaller data, and H2O's AutoML suits cases where automatically comparing many models adds value.
-- **Scale:** queries over **22 million** Wikipedia clickstream rows (for example, the top referrers driving traffic to Wikipedia) ran interactively on a Spark cluster.
+- **Data platform:** Databricks, Unity Catalog, Hive/HiveQL, Apache Spark, PySpark DataFrames, and Spark SQL.
+- **Feature preparation:** SQLTransformer, Imputer, StringIndexer, OneHotEncoder, VectorAssembler, and scaling examples.
+- **Modeling and evaluation:** logistic regression, decision tree, random forest, gradient-boosted regression trees, CrossValidator, ParamGridBuilder, ROC-AUC, accuracy, weighted F1, and RMSE.
+- **Tracking and applications:** MLflow, scikit-learn in the wine-quality lab, Streamlit, python-dotenv, and the OpenAI-compatible SDK.
+- **Languages and analysis:** Python, SQL, Linux shell, pandas, NumPy, and Matplotlib.
 
-## 🛠 Technologies
+## Results & Insights
 
-- **Databricks** (Unity Catalog, volumes, clusters)
-- **Apache Spark / PySpark:** DataFrames, Spark SQL, MLlib, Structured Streaming
-- **Hive** (HiveQL)
-- **MLflow**
-- Streamlit, OpenAI-compatible SDK, Databricks AI Gateway
-- Python, SQL, Linux shell
+These values come from saved notebook outputs; they have not been independently rerun for this documentation update.
 
-## ✅ Outcome
+| Use case | Model / run | Test ROC-AUC | Test accuracy | Test weighted F1 |
+|---|---|---:|---:|---:|
+| Titanic survival | Logistic regression | 0.797 | 73.9% | 0.737 |
+| Titanic survival | Random forest, including the cross-validated run | **0.831** | **81.9%** | **0.814** |
+| Census income | Logistic regression baseline | 0.904 | 85.4% | — |
+| Census income | Logistic regression, 3-fold CV over 9 combinations | 0.904 | 85.4% | — |
 
-The repository shows end-to-end big data skills, from ingesting and querying multi-gigabyte datasets to building, tuning, tracking and deploying scalable ML models and an LLM-powered application. These are the same tools used in production data platforms.
+- **Model choice:** the Titanic random forest performed better than logistic regression on the saved test split. Its tuned run matched the untuned forest's displayed metrics.
+- **Tuning:** the census runs achieved nearly identical test performance. Cross-validation documents a systematic search; these outputs do not establish improved generalization.
+- **Scale and data quality:** the Wikipedia read returned **22,509,898 rows**, including the header read as data, and the sample contained **2,252,530 rows**. The saved schema places the click count and title columns in the wrong order, affecting downstream sums and rankings. Those rankings need correction and a fresh run before interpretation. See [the evidence notes](docs/RESULTS_EVIDENCE.md).
+- **Experiment traceability:** the MLflow lab records wine-quality gradient-boosting test AUC of 0.8834 for the baseline and 0.8912 with 200 estimators.
+
+These are educational implementations and saved experiments. Production deployment, latency, throughput, and business impact have not been measured here.
+
+## Repository Structure
+
+| Folder | Files and purpose |
+|---|---|
+| [01_Databricks_and_Spark_Basics](01_Databricks_and_Spark_Basics/) | Linux shell and file operations; `Lab5-1_Using_Spark.ipynb` |
+| [02_Hive](02_Hive/) | `Lab3-1_Hive_Intro.ipynb`, `HW1_Big_Data_and_Hive.ipynb` |
+| [03_Spark_DataFrames_and_SQL](03_Spark_DataFrames_and_SQL/) | DataFrame creation, LendingClub analysis, and `HW2_Spark_SQL_Yelp.ipynb` |
+| [04_Spark_MLlib](04_Spark_MLlib/) | Feature APIs, concrete features, used-car classification, bike-share regression, and `HW3_Spark_MLlib.ipynb` |
+| [05_Structured_Streaming](05_Structured_Streaming/) | `Lab10-2_IoT_Streaming.ipynb` |
+| [06_MLflow](06_MLflow/) | `Lab13-2_MLflow_Tracking.ipynb`, `HW4_MLflow_with_Spark_MLlib.ipynb` |
+| [07_GenAI_Chatbot](07_GenAI_Chatbot/) | `chatbot.py`, application dependencies, and `.env.example` |
+| [docs](docs/) | Metric provenance and reproduction notes |
+
+## Getting Started
+
+### Databricks notebooks
+
+1. Import the desired `.ipynb` files into a Databricks workspace and attach compatible compute. The notebooks use a provided `spark` session, `dbutils`, and Databricks SQL/display features.
+2. Review input, catalog, schema, volume, model, and checkpoint paths. The examples include table overwrites and cleanup cells that drop resources.
+3. Obtain the referenced datasets from `databricks-datasets`, public sources, or course-hosted downloads. Large datasets are not included; original paths may no longer be available.
+4. Run setup and preparation cells before the analytical cells. Review the clickstream column-order and header issue before interpreting aggregations.
+5. Open the experiment view for the MLflow modules to inspect parameters, metrics, and model artifacts.
+
+The root [requirements.txt](requirements.txt) lists supporting Python packages; installing it alone does not recreate the Databricks environment. Notebook exports retain text outputs, while some interactive charts are absent.
+
+### Streamlit chatbot
+
+From the repository root:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r 07_GenAI_Chatbot/requirements.txt
+cd 07_GenAI_Chatbot
+cp .env.example .env
+```
+
+Set all three variables in `.env`: `DATABRICKS_TOKEN`, `DATABRICKS_BASE_URL`, and `DATABRICKS_LLM_MODEL`, using a reachable, authorized endpoint. Then launch:
+
+```bash
+streamlit run chatbot.py
+```
+
+Keep credentials in the local environment. The application calls a hosted model and requires network access.
+
+## Applications & Takeaways
+
+- **Analytical reporting:** schema checks, joins, and aggregation patterns can support repeatable reporting on customer, lending, review, or event data.
+- **Decision support:** comparing models with multiple metrics makes trade-offs visible before selecting a predictive approach.
+- **Operational monitoring:** streaming windows and checkpoints illustrate how event summaries can feed monitoring workflows.
+- **Reproducibility:** experiment logs make model choices reviewable, while source-schema validation is essential before turning query outputs into recommendations.
+
+These are potential applications of the techniques; revenue gains and operational deployment have not been evaluated.
+
+## Project Context
+
+Developed for **MSBA 6331 — Big Data Analytics**, Carlson School of Management, University of Minnesota. Original module names, notebooks, and saved outputs are retained.
 
 ---
 
